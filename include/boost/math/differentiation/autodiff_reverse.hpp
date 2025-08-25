@@ -6,12 +6,23 @@
 #define BOOST_MATH_DIFFERENTIATION_AUTODIFF_HPP
 
 #include <boost/math/constants/constants.hpp>
-#include <boost/math/differentiation/detail/reverse_mode_autodiff_basic_operator_overloads.hpp>
+
+#ifndef BOOST_MATH_ET_OFF
+#define BOOST_MATH_ET_ON
+#endif
+
+#ifdef BOOST_MATH_ET_ON
+#include <boost/math/differentiation/detail/reverse_mode_autodiff_basic_ops_et.hpp>
+#include <boost/math/differentiation/detail/reverse_mode_autodiff_stl_et.hpp>
+#else
+#include <boost/math/differentiation/detail/reverse_mode_autodiff_basic_ops_no_et.hpp>
+#include <boost/math/differentiation/detail/reverse_mode_autodiff_stl_no_et.hpp>
+#endif
+
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_comparison_operator_overloads.hpp>
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_erf_overloads.hpp>
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_expression_template_base.hpp>
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_memory_management.hpp>
-#include <boost/math/differentiation/detail/reverse_mode_autodiff_stl_overloads.hpp>
 #include <boost/math/special_functions/acosh.hpp>
 #include <boost/math/special_functions/asinh.hpp>
 #include <boost/math/special_functions/atanh.hpp>
