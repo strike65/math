@@ -7,11 +7,11 @@
 
 #include <boost/math/constants/constants.hpp>
 
-#ifndef BOOST_MATH_ET_OFF
-#define BOOST_MATH_ET_ON
+#ifndef BOOST_MATH_REVERSE_MODE_ET_OFF
+#define BOOST_MATH_REVERSE_MODE_ET_ON
 #endif
 
-#ifdef BOOST_MATH_ET_ON
+#ifdef BOOST_MATH_REVERSE_MODE_ET_ON
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_basic_ops_et.hpp>
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_stl_et.hpp>
 #else

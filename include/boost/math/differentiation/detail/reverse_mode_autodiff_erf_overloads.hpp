@@ -8,7 +8,7 @@
 #include <boost/math/constants/constants.hpp>
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_expression_template_base.hpp>
 
-#ifdef BOOST_MATH_ET_ON
+#ifdef BOOST_MATH_REVERSE_MODE_ET_ON
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_stl_et.hpp>
 #else
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_stl_no_et.hpp>

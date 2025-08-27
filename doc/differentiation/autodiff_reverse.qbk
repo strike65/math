@@ -8,8 +8,13 @@
 [template autodiff_graph[name] '''<inlinemediaobject><imageobject><imagedata fileref="../graphs/autodiff/'''[name]'''"></imagedata></imageobject></inlinemediaobject>''']
 [h1:synopsis Synopsis]
 
+    /* enable or disable expression templates at compile time */
+    #ifndef BOOST_MATH_REVERSE_MODE_ET_OFF
+    #define BOOST_MATH_REVERSE_MODE_ET_ON
+    #endif
+
     #include <boost/math/differentiation/autodiff_reverse.hpp>
-    
+
     namespace boost {
     namespace math {
     namespace differentiation {
@@ -572,7 +577,17 @@ When in doubt, its always preferrable to compute higher order derivatives with:
   auto g4 = grad_nd<4>(f, &x,&y,&z)
 
 [h2:expression-templates-and-auto Expression Templates and auto]
-Reverse mode autodiff is expression template based. This means that some care has to be taken into considerations when writing code that uses this library. For example consider the code below:
+Reverse mode autodiff is expression template based by default. If you'd like to disable expression templates (for debugging, benchmarking, or simplify integration with other systems), you must define the following macro at compile time:
+
+    #define BOOST_MATH_REVERSE_MODE_ET_OFF
+
+or pass it to the compiler via flag
+
+    g++ -DBOOST_MATH_REVERSE_MODE_ET_OFF
+
+The expression templated version of this code doesn't currently interact nicely with the Boost.Math special function implementations, and will throw compile time errors. Disabling expression templates will often fix this, however various special functions are implemented in a way that breaks the automatic differentiation chain for certain values. Complete special function support may be added in the future.
+
+Furthermore, some care also has to be taken when writing code with expression templated types. For example consider the code below:
 
     rvar<double, 1> x = 1.0;
     rvar<double, 1> y = 2.0;

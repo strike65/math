@@ -6,7 +6,7 @@
 #define REVERSE_MODE_AUTODIFF_STL_OVERLOADS
 /* stl support : expressions */
 
-#ifdef BOOST_MATH_ET_ON
+#ifdef BOOST_MATH_REVERSE_MODE_ET_ON
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_basic_ops_et.hpp>
 #else
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_basic_ops_no_et.hpp>
