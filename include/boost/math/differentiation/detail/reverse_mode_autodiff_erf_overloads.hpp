@@ -7,7 +7,13 @@
 
 #include <boost/math/constants/constants.hpp>
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_expression_template_base.hpp>
-#include <boost/math/differentiation/detail/reverse_mode_autodiff_stl_overloads.hpp>
+
+#ifdef BOOST_MATH_REVERSE_MODE_ET_ON
+#include <boost/math/differentiation/detail/reverse_mode_autodiff_stl_et.hpp>
+#else
+#include <boost/math/differentiation/detail/reverse_mode_autodiff_stl_no_et.hpp>
+#endif
+
 #include <boost/math/differentiation/detail/reverse_mode_autodiff_utilities.hpp>
 #include <boost/math/special_functions/erf.hpp>
 #include <boost/multiprecision/cpp_bin_float.hpp>
