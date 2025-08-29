@@ -153,12 +153,12 @@ T erf_imp(T z, bool invert, const Policy& pol, const Tag& t)
    if ((boost::math::isnan)(z))
       return policies::raise_domain_error("boost::math::erf<%1%>(%1%)", "Expected a finite argument but got %1%", z, pol);
 
-   if(fabs(z) < tools::root_epsilon<T>())
+   if (fabs(z) < tools::root_epsilon<T>())
    {
       // Series[Erf[x], {x, 0, 4}]
       // Series[Erfc[x], {x, 0, 4}]
 
-      const T term2 { 2 * z / constants::root_pi<T>() };
+      const T term2 { z * 2 / constants::root_pi<T>() };
 
       return invert ? 1 - term2 : term2;
    }
@@ -173,50 +173,43 @@ T erf_imp(T z, bool invert, const Policy& pol, const Tag& t)
          return 1 + erf_imp(T(-z), false, pol, t);
    }
 
-   if (z > 0)
+   T result;
+
+   if(!invert && (z > detail::erf_asymptotic_limit<T, Policy>()))
    {
-      T result;
-
-      if(!invert && (z > detail::erf_asymptotic_limit<T, Policy>()))
-      {
-         detail::erf_asympt_series_t<T> s(z);
-         std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
-         result = boost::math::tools::sum_series(s, policies::get_epsilon<T, Policy>(), max_iter, 1);
-         policies::check_series_iterations<T>("boost::math::erf<%1%>(%1%, %1%)", max_iter, pol);
-      }
-      else
-      {
-         T x = z * z;
-         if(z < 1.3f)
-         {
-            // Compute P:
-            // This is actually good for z p to 2 or so, but the cutoff given seems
-            // to be the best compromise.  Performance wise, this is way quicker than anything else...
-            result = erf_series_near_zero_sum(z, pol);
-         }
-         else if(x > 1 / tools::epsilon<T>())
-         {
-            // http://functions.wolfram.com/06.27.06.0006.02
-            invert = !invert;
-            result = exp(-x) / (constants::root_pi<T>() * z);
-         }
-         else
-         {
-            // Compute Q:
-            invert = !invert;
-            result = z * exp(-x);
-            result /= boost::math::constants::root_pi<T>();
-            result *= upper_gamma_fraction(T(0.5f), x, policies::get_epsilon<T, Policy>());
-         }
-      }
-
-      return ((!invert) ? result : 1 - result);
+      detail::erf_asympt_series_t<T> s(z);
+      std::uintmax_t max_iter = policies::get_max_series_iterations<Policy>();
+      result = boost::math::tools::sum_series(s, policies::get_epsilon<T, Policy>(), max_iter, 1);
+      policies::check_series_iterations<T>("boost::math::erf<%1%>(%1%, %1%)", max_iter, pol);
    }
    else
    {
-      // Handle z == 0.
-      return ((!invert) ? T(0) : T(1));
+      const T z_sq { z * z };
+
+      if(z < 1.3f)
+      {
+         // Compute P:
+         // This is actually good for z p to 2 or so, but the cutoff given seems
+         // to be the best compromise.  Regarding performance, this is way quicker than anything else...
+         result = erf_series_near_zero_sum(z, pol);
+      }
+      else if(z_sq > 1 / tools::epsilon<T>())
+      {
+         // http://functions.wolfram.com/06.27.06.0006.02
+         invert = !invert;
+         result = exp(-z_sq) / (constants::root_pi<T>() * z);
+      }
+      else
+      {
+         // Compute Q:
+         invert = !invert;
+         result = z * exp(-z_sq);
+         result /= boost::math::constants::root_pi<T>();
+         result *= upper_gamma_fraction(T(0.5f), z_sq, policies::get_epsilon<T, Policy>());
+      }
    }
+
+   return ((!invert) ? result : 1 - result);
 }
 // LCOV_EXCL_STOP
 
