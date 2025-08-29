@@ -181,7 +181,7 @@ void test_erf(T, const char* name)
    BOOST_CHECK(boost::math::erf(boost::math::tools::epsilon<T>() / 32) >= T(0));
    BOOST_CHECK(boost::math::erfc(boost::math::tools::epsilon<T>() / 32) <= T(1));
 
-   const bool has_negative_zero { (boost::math::signbit)(-T(0)) };
+   const bool has_negative_zero { ((boost::math::signbit)(-T(0)) != 0) };
 
    if(has_negative_zero)
    {
