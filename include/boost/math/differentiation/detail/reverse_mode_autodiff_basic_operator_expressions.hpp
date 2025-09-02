@@ -39,13 +39,13 @@ struct add_expr : public abstract_binary_expression<RealType,
                                          const inner_t & /*r*/,
                                          const inner_t & /*v*/)
     {
-        return inner_t(1.0);
+        return inner_t(static_cast<RealType>(1.0));
     }
     static const inner_t right_derivative(const inner_t & /*l*/,
                                           const inner_t & /*r*/,
                                           const inner_t & /*v*/)
     {
-        return inner_t(1.0);
+        return inner_t(static_cast<RealType>(1.0));
     }
 };
 template<typename RealType, size_t DerivativeOrder, typename ARG>
@@ -70,7 +70,7 @@ struct add_const_expr
                                     const inner_t & /*v*/,
                                     const RealType & /*constant*/)
     {
-        return inner_t(1.0);
+        return inner_t(static_cast<RealType>(1.0));
     }
 };
 /****************************************************************************************************************/
@@ -164,13 +164,13 @@ struct sub_expr : public abstract_binary_expression<RealType,
                                          const inner_t & /*r*/,
                                          const inner_t & /*v*/)
     {
-        return inner_t(1.0);
+        return inner_t(static_cast<RealType>(1.0));
     }
     static const inner_t right_derivative(const inner_t & /*l*/,
                                           const inner_t & /*r*/,
                                           const inner_t & /*v*/)
     {
-        return inner_t(-1.0);
+        return inner_t(static_cast<RealType>(-1.0));
     }
 };
 

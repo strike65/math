@@ -411,7 +411,7 @@ private:
     void make_rvar_from_expr(const expression<RealType, DerivativeOrder, E> &expr)
     {
         make_multi_node<detail::count_rvars<E, DerivativeOrder>>();
-        expr.template propagatex<0>(node_, inner_t(1.0));
+        expr.template propagatex<0>(node_, inner_t(static_cast<RealType>(1.0)));
     }
     RealType get_item_impl(std::true_type) const
     {
@@ -429,7 +429,7 @@ public:
         make_leaf_node();
     }
     rvar(const RealType value)
-        : value_(inner_t{value})
+        : value_(inner_t{static_cast<RealType>(value)})
     {
         make_leaf_node();
     }
@@ -458,6 +458,16 @@ public:
         value_ = expr.evaluate();
         make_rvar_from_expr(expr);
     }
+
+    template<typename T,
+             typename = typename std::enable_if<std::is_same<T, double>::value
+                                                && !std::is_same<RealType, double>::value>::type>
+    rvar(T v)
+        : value_(inner_t{static_cast<RealType>(v)})
+    {
+        make_leaf_node();
+    }
+
     template<class E>
     rvar &operator=(const expression<RealType, DerivativeOrder, E> &expr)
     {
@@ -560,7 +570,7 @@ public:
         gradient_tape<RealType, DerivativeOrder, BOOST_MATH_BUFFER_SIZE> &tape
             = get_active_tape<RealType, DerivativeOrder>();
         auto                                  it   = tape.find(node_);
-        it->update_adjoint_v(inner_t(1.0));
+        it->update_adjoint_v(inner_t(static_cast<RealType>(1.0)));
         while (it != tape.begin()) {
             it->backward();
             --it;

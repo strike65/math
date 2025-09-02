@@ -9,7 +9,7 @@ BOOST_AUTO_TEST_SUITE(explicit_rvar_constructors)
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(rvar_constructors_and_utils, T, all_float_types)
 {
-    RandomSample<T>                          rng{-100, 100};
+    RandomSample<T>                          rng{T(-100), T(100)};
     /* raw constructors */
     T                                        x_value = rng.next();
     rdiff::rvar<T, 1>                        x0(x_value);
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(rvar_constructors_and_utils, T, all_float_types)
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(make_rvar_constructors, T, all_float_types)
 {
-    RandomSample<T> rng{-100, 100};
+    RandomSample<T> rng{T(-100), T(100)};
     T               x_value = rng.next();
 
     rdiff::rvar<T,1> x1 = rdiff::make_rvar<T,1>(x_value);
@@ -226,9 +226,9 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(inplace_multiplication, T, all_float_types)
 BOOST_AUTO_TEST_CASE_TEMPLATE(inplace_division, T, all_float_types)
 {
     using namespace rdiff;
-    RandomSample<T> rng{-1, 1};
+    RandomSample<T> rng{T(-1), T(1)};
     T               x1_v = rng.next();
-    T               x2_v = rng.next() + 1e-2;
+    T               x2_v = rng.next() + T(1e-2);
 
     T expected = x1_v / x2_v;
 
@@ -255,8 +255,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(inplace_division, T, all_float_types)
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_rvar_ostream_output, T, all_float_types)
 {
     using namespace rdiff;
-    rvar<T, 1> x = T{2.0};
-    rvar<T, 1> y = T{3.0};
+    rvar<T, 1> x = static_cast<T>(2.0);
+    rvar<T, 1> y = static_cast<T>(3.0);
 
     rvar<T, 1> z = x * y;
     z.backward();

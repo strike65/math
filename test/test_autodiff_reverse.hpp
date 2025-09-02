@@ -10,6 +10,11 @@
 #define BOOST_MP_NO_QUAD
 #define BOOST_MATH_DISABLE_FLOAT128
 #include <boost/test/included/unit_test.hpp>
+#include <version> // always safe
+
+#if __has_include(<stdfloat>)
+#include <stdfloat>
+#endif
 
 #include <algorithm>
 #include <boost/math/differentiation/autodiff_reverse.hpp>

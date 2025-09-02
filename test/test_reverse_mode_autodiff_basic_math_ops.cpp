@@ -33,8 +33,8 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(addition, T, all_float_types)
     gradient_tape<T, 1>& tape = get_active_tape<T, 1>();
     tape.zero_grad();
     test_rvar_p_rvar.backward();
-    BOOST_REQUIRE_EQUAL(x1.adjoint(), 1.0);
-    BOOST_REQUIRE_EQUAL(x2.adjoint(), 1.0);
+    BOOST_REQUIRE_EQUAL(x1.adjoint(), T(1.0));
+    BOOST_REQUIRE_EQUAL(x2.adjoint(), T(1.0));
 
     tape.zero_grad();
     rvar<T, 1> z = x1 + x1 + x1 + x1 + x1;
@@ -44,7 +44,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(addition, T, all_float_types)
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(multiplication, T, all_float_types)
 {
-    RandomSample<T> rng{-100, 100};
+    RandomSample<T> rng{T(-100), T(100)};
     T               x1_v               = rng.next();
     T               x2_v               = rng.next();
     T               test_rvar_p_rvar_v = x1_v * x2_v;
@@ -70,7 +70,7 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(multiplication, T, all_float_types)
     auto       z = x1 * x1 * x1 * x1 * x1;
     rvar<T, 1> zz(z);
     zz.backward();
-    BOOST_REQUIRE_CLOSE(x1.adjoint(), 5 * x1_v * x1_v * x1_v * x1_v, boost_close_tol<T>());
+    BOOST_REQUIRE_CLOSE(x1.adjoint(), T(5) * x1_v * x1_v * x1_v * x1_v, boost_close_tol<T>());
     tape.clear();
 }
 
@@ -278,8 +278,8 @@ std::vector<std::vector<std::vector<std::vector<T>>>> df_4_a(T x, T y)
 BOOST_AUTO_TEST_CASE_TEMPLATE(first_derivative, T, all_float_types)
 {
     //RandomSample<T> rng{-1, 1};
-    T x = 1.1224;   //rng.next();
-    T y = 5.213414; //rng.next();
+    T x(1.1224);   //rng.next();
+    T y(5.213414); //rng.next();
 
     rvar<T, 1>      x_ad              = x;
     rvar<T, 1>      y_ad              = y;

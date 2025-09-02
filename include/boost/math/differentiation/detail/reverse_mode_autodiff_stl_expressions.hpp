@@ -50,7 +50,8 @@ struct fabs_expr : public abstract_unary_expression<RealType, DerivativeOrder, A
                                     const inner_t & /*v*/,
                                     const RealType & /*constant*/)
     {
-        return argv > 0.0 ? inner_t{1.0} : inner_t{-1.0};
+        return argv > 0.0 ? inner_t{static_cast<RealType>(1.0)}
+                          : inner_t{static_cast<RealType>(-1.0)};
     }
 };
 
