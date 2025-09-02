@@ -697,6 +697,49 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_tanh, T, all_float_types)
     BOOST_REQUIRE_CLOSE_FRACTION(x_rvar.adjoint(), expected_deriv, boost_close_tol<T>());
     tape.clear();
 }
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_ldexp, T, all_float_types)
+{
+    RandomSample<T> rng{-2, 2};
+    T               x_v         = rng.next();
+    int             exp_i       = 3;
+    T               test_func_v = ldexp(x_v, exp_i);
+
+    rvar<T, 1> x_rvar = x_v;
+
+    rvar<T, 1> x_func = ldexp(x_rvar, exp_i);
+
+    BOOST_REQUIRE_CLOSE_FRACTION(x_func.item(), test_func_v, boost_close_tol<T>());
+
+    gradient_tape<T, 1>& tape = get_active_tape<T, 1>();
+
+    tape.zero_grad();
+
+    // f(x) = ldexp(x^2, exp_i) = x^2 * 2^exp_i
+    rvar<T, 1> test_func_2 = ldexp(x_rvar * x_rvar, exp_i);
+
+    // Expected derivative: d/dx [x^2 * 2^exp_i] = 2x * 2^exp_i
+    T expected_deriv = static_cast<T>(2) * x_v * pow(static_cast<T>(2.0), exp_i);
+
+    test_func_2.backward();
+
+    BOOST_REQUIRE_CLOSE_FRACTION(x_rvar.adjoint(), expected_deriv, boost_close_tol<T>());
+
+    tape.clear();
+}
+BOOST_AUTO_TEST_CASE_TEMPLATE(test_ldexp_huge_val, T, all_float_types)
+{
+    const T   huge_val    = std::numeric_limits<T>::infinity();
+    const int exp         = 1;
+    T         result_huge = ldexp(huge_val, exp);
+    BOOST_REQUIRE_EQUAL(result_huge, huge_val);
+    rvar<T, 1> x_huge    = huge_val;
+    rvar<T, 1> func_huge = ldexp(x_huge, exp);
+    BOOST_REQUIRE_EQUAL(func_huge.item(), huge_val);
+    func_huge.backward();
+    T expected_adjoint = static_cast<T>(2);
+    BOOST_REQUIRE_EQUAL(x_huge.adjoint(), expected_adjoint);
+    get_active_tape<T, 1>().clear();
+}
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_log10, T, all_float_types)
 {
