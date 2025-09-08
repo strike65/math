@@ -56,7 +56,7 @@ BOOST_MATH_GPU_ENABLED T hypot_imp(T x, T y, const Policy& pol)
 } // template <class T> T hypot(T x, T y)
 
 template <class T, class Policy>
-BOOST_MATH_GPU_ENABLED T hypot_impl(T x, T y, T z, const Policy& pol)
+BOOST_MATH_GPU_ENABLED T hypot_imp(T x, T y, T z, const Policy& pol)
 {
    BOOST_MATH_STD_USING
 
@@ -118,7 +118,7 @@ BOOST_MATH_GPU_ENABLED inline typename tools::promote_args<T1, T2>::type
 }
 
 template <class T1, class T2, class T3, boost::math::enable_if_t<boost::math::numeric_limits<T3>::is_specialized, bool>>
-BOOST_MATH_GPU_ENABLED tools::promote_args_t<T1, T2, T3>
+BOOST_MATH_GPU_ENABLED inline tools::promote_args_t<T1, T2, T3>
    hypot(T1 x, T2 y, T3 z)
 {
    using result_type = tools::promote_args_t<T1, T2, T3>;
@@ -129,7 +129,7 @@ BOOST_MATH_GPU_ENABLED tools::promote_args_t<T1, T2, T3>
 }
 
 template <class T1, class T2, class T3, class Policy>
-BOOST_MATH_GPU_ENABLED tools::promote_args_t<T1, T2, T3>
+BOOST_MATH_GPU_ENABLED inline tools::promote_args_t<T1, T2, T3>
    hypot(T1 x, T2 y, T3 z, const Policy& pol)
 {
    using result_type = tools::promote_args_t<T1, T2, T3>;
