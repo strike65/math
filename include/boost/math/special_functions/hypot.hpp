@@ -81,6 +81,12 @@ BOOST_MATH_GPU_ENABLED T hypot_impl(T x, T y, T z, const Policy& pol)
    #endif
 
    const T a {(max)((max)(x, y), z)};
+
+   if (a == T(0))
+   {
+      return a;
+   }
+
    const T x_div_a {x / a};
    const T y_div_a {y / a};
    const T z_div_a {z / a};
