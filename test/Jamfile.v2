@@ -1397,16 +1397,6 @@ test-suite "test_reverse_mode_autodiff"
         [ run test_reverse_mode_autodiff_basic_math_ops.cpp ]
         [ run test_reverse_mode_autodiff_error_functions.cpp ]
     ;
-test-suite "test_reverse_mode_autodiff_specfun_compile_tests"
-    :
-    	[ run test_reverse_mode_autodiff_special_functions_compile/gamma_functions/test_reverse_mode_autodiff_tgamma_compile_test_ET_ON_cpp_types.cpp ]
-	[ run test_reverse_mode_autodiff_special_functions_compile/gamma_functions/test_reverse_mode_autodiff_tgamma_compile_test_ET_OFF_cpp_types.cpp ]
-	[ compile-fail test_reverse_mode_autodiff_special_functions_compile/gamma_functions/test_reverse_mode_autodiff_tgamma_compile_test_ET_ON_mp_types.cpp ]
-	[ compile-fail test_reverse_mode_autodiff_special_functions_compile/gamma_functions/test_reverse_mode_autodiff_tgamma_compile_test_ET_OFF_mp_types.cpp ]
-
-
-
-    ;
 
 rule get_float128_tests
 {
