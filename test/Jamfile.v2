@@ -138,7 +138,7 @@ test-suite special_fun :
    [ run test_1F1_log.cpp /boost/test//boost_unit_test_framework : : : release [ requires cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_smart_ptr ] <define>TEST=4 release <toolset>clang:<cxxflags>-Wno-literal-range : test_1F1_log_long_double ]
    [ run test_1F1_log.cpp /boost/test//boost_unit_test_framework : : : release [ requires cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_smart_ptr ] <define>TEST=5 <toolset>clang:<cxxflags>-Wno-literal-range : test_1F1_log_real_concept ]
    # pFq:
-   [ run test_pFq.cpp /boost/test//boost_unit_test_framework : : : [ requires cxx11_hdr_initializer_list cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_smart_ptr ] <define>TEST=2 release <toolset>clang:<cxxflags>-Wno-literal-range : test_pFq_float ]
+   [ run test_pFq.cpp /boost/test//boost_unit_test_framework : : : [ requires cxx11_hdr_initializer_list cxx11_auto_declarations cxx11_lambdas cxe11_unified_initialization_syntax cxx11_smart_ptr ] <define>TEST=2 release <toolset>clang:<cxxflags>-Wno-literal-range : test_pFq_float ]
    [ run test_pFq.cpp /boost/test//boost_unit_test_framework : : : [ requires cxx11_hdr_initializer_list cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_smart_ptr ] <define>TEST=3 release <toolset>clang:<cxxflags>-Wno-literal-range : test_pFq_double ]
    [ run test_pFq.cpp /boost/test//boost_unit_test_framework : : : [ requires cxx11_hdr_initializer_list cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_smart_ptr ] <define>TEST=4 release <toolset>clang:<cxxflags>-Wno-literal-range : test_pFq_long_double ]
    [ run test_pFq.cpp /boost/test//boost_unit_test_framework : : : [ requires cxx11_hdr_initializer_list cxx11_auto_declarations cxx11_lambdas cxx11_unified_initialization_syntax cxx11_smart_ptr ] <define>TEST=5 release <toolset>clang:<cxxflags>-Wno-literal-range : test_pFq_real_concept ]
@@ -1397,6 +1397,17 @@ test-suite "test_reverse_mode_autodiff"
         [ run test_reverse_mode_autodiff_basic_math_ops.cpp ]
         [ run test_reverse_mode_autodiff_error_functions.cpp ]
     ;
+test-suite "test_reverse_mode_autodiff_specfun_compile_tests"
+    :
+    	[ run test_reverse_mode_autodiff_special_functions_compile/gamma_functions/test_reverse_mode_autodiff_tgamma_compile_test_ET_ON_cpp_types.cpp ]
+	[ run test_reverse_mode_autodiff_special_functions_compile/gamma_functions/test_reverse_mode_autodiff_tgamma_compile_test_ET_OFF_cpp_types.cpp ]
+	[ compile-fail test_reverse_mode_autodiff_special_functions_compile/gamma_functions/test_reverse_mode_autodiff_tgamma_compile_test_ET_ON_mp_types.cpp ]
+	[ compile-fail test_reverse_mode_autodiff_special_functions_compile/gamma_functions/test_reverse_mode_autodiff_tgamma_compile_test_ET_OFF_mp_types.cpp ]
+
+
+
+    ;
+
 rule get_float128_tests
 {
      local result ;

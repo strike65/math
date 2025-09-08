@@ -8,7 +8,11 @@
 #include <boost/math/constants/constants.hpp>
 
 #if defined(BOOST_MATH_REVERSE_MODE_ET_OFF) && defined(BOOST_MATH_REVERSE_MODE_ET_ON)
-#error "BOOST_MATH_REVERSE_MODE_ET_OFF and BOOST_MATH_REVERSE_MODE_ET_ON are mutually exclusive"
+#error "Cannot define both BOOST_MATH_REVERSE_MODE_ET_OFF and BOOST_MATH_REVERSE_MODE_ET_ON"
+#endif
+
+#if !defined(BOOST_MATH_REVERSE_MODE_ET_OFF) && !defined(BOOST_MATH_REVERSE_MODE_ET_ON)
+#define BOOST_MATH_REVERSE_MODE_ET_ON
 #endif
 
 #ifdef BOOST_MATH_REVERSE_MODE_ET_ON

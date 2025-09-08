@@ -31,14 +31,25 @@
 <a name="math_toolkit.autodiff0.h0"></a>
       <span class="phrase"><a name="math_toolkit.autodiff0.synopsis"></a></span><a class="link" href="autodiff0.html#math_toolkit.autodiff0.synopsis">Synopsis</a>
     </h2>
-<pre class="programlisting"><span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">math</span><span class="special">/</span><span class="identifier">differentiation</span><span class="special">/</span><span class="identifier">autodiff_reverse</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
+<pre class="programlisting"><span class="comment">/* enable or disable expression templates at compile time */</span>
+<span class="preprocessor">#ifndef</span> <span class="identifier">BOOST_MATH_REVERSE_MODE_ET_OFF</span>
+<span class="preprocessor">#define</span> <span class="identifier">BOOST_MATH_REVERSE_MODE_ET_ON</span>
+<span class="preprocessor">#endif</span>
+
+<span class="preprocessor">#include</span> <span class="special">&lt;</span><span class="identifier">boost</span><span class="special">/</span><span class="identifier">math</span><span class="special">/</span><span class="identifier">differentiation</span><span class="special">/</span><span class="identifier">autodiff_reverse</span><span class="special">.</span><span class="identifier">hpp</span><span class="special">&gt;</span>
 
 <span class="keyword">namespace</span> <span class="identifier">boost</span> <span class="special">{</span>
 <span class="keyword">namespace</span> <span class="identifier">math</span> <span class="special">{</span>
 <span class="keyword">namespace</span> <span class="identifier">differentiation</span> <span class="special">{</span>
 <span class="keyword">namespace</span> <span class="identifier">reverse_mode</span> <span class="special">{</span>
 
-<span class="comment">/* autodiff variable of type RealType (numeric types), stores derivatives up to DerivativeOrder*/</span>
+<span class="comment">/* autodiff variable of type RealType (numeric types), stores derivatives up to DerivativeOrder
+* rvar inherits from a generic expression base class
+* expression&lt;RealType, DerivativeOrder, rvar&lt;RealType, DerivativeOrder&gt;&gt;
+* This is a Curiously Recurring Template Pattern(CRTP)
+* The purpose is so that rvar acts as a terminal node in an expression graph, and can be combined
+* with other expression-based types (sums, producs, etc..) to form expression graphs.
+*/</span>
 <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">RealType</span><span class="special">,</span> <span class="identifier">size_t</span> <span class="identifier">DerivativeOrder</span> <span class="special">=</span> <span class="number">1</span><span class="special">&gt;</span>
 <span class="keyword">class</span> <span class="identifier">rvar</span> <span class="special">:</span> <span class="keyword">public</span> <span class="identifier">expression</span><span class="special">&lt;</span><span class="identifier">RealType</span><span class="special">,</span> <span class="identifier">DerivativeOrder</span><span class="special">,</span> <span class="identifier">rvar</span><span class="special">&lt;</span><span class="identifier">RealType</span><span class="special">,</span> <span class="identifier">DerivativeOrder</span><span class="special">&gt;&gt;</span> <span class="special">{</span>
   <span class="comment">// inner_t of rvar&lt;RealType, N&gt; = var&lt;RealType, N-1&gt;</span>
@@ -49,7 +60,7 @@
   <span class="comment">// default</span>
   <span class="identifier">rvar</span><span class="special">();</span>
   <span class="comment">// construct from numeric type</span>
-  <span class="identifier">rar</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">RealType</span> <span class="identifier">value</span><span class="special">);</span>
+  <span class="identifier">rvar</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">RealType</span> <span class="identifier">value</span><span class="special">);</span>
   <span class="comment">// copy</span>
   <span class="identifier">rvar</span><span class="special">(</span><span class="keyword">const</span> <span class="identifier">rvar</span><span class="special">&lt;</span><span class="identifier">RealType</span><span class="special">,</span> <span class="identifier">DerivativeOrder</span><span class="special">&gt;</span> <span class="identifier">other</span><span class="special">);</span>
 
@@ -83,6 +94,11 @@
 <span class="special">}</span>
 
 <span class="comment">// gradient tape holds the computational graph</span>
+<span class="comment">/*
+* The expression graph is stored on a tape. The tape is closely related to the memory manegement
+* system in the library. BOOST_MATH_BUFFER_SIZE is set to 65536. It controls the block size of the
+* internal memory arena. Its a macro, and can be set at compile time.
+*/</span>
 <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">RealType</span><span class="special">,</span> <span class="identifier">size_t</span> <span class="identifier">DerivativeOrder</span><span class="special">,</span> <span class="identifier">size_t</span> <span class="identifier">buffer_size</span> <span class="special">=</span> <span class="identifier">BOOST_MATH_BUFFER_SIZE</span><span class="special">&gt;</span>
 <span class="keyword">class</span> <span class="identifier">gradient_tape</span> <span class="special">{</span>
 
@@ -104,7 +120,7 @@
 <span class="special">}</span>
 
 <span class="comment">// tape access</span>
-<span class="keyword">template</span><span class="special">&lt;</span><span class="identifier">typenametemplate</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">RealType</span><span class="special">,</span> <span class="identifier">size_t</span> <span class="identifier">DerivativeOrder</span><span class="special">&gt;</span>
+<span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="keyword">template</span><span class="special">&lt;</span><span class="keyword">typename</span> <span class="identifier">RealType</span><span class="special">,</span> <span class="identifier">size_t</span> <span class="identifier">DerivativeOrder</span><span class="special">&gt;&gt;</span>
 <span class="keyword">inline</span> <span class="identifier">gradient_tape</span><span class="special">&lt;</span><span class="identifier">RealType</span><span class="special">,</span> <span class="identifier">DerivativeOrder</span><span class="special">,</span> <span class="identifier">BOOST_MATH_BUFFER_SIZE</span><span class="special">&gt;</span> <span class="special">&amp;</span><span class="identifier">get_active_tape</span><span class="special">();</span>
 
 <span class="comment">// standard math functions are overloaded using expression templates</span>
@@ -152,7 +168,7 @@
 <p>
       Reverse mode autodiff is a header-only C++ library the <a href="https://en.wikipedia.org/wiki/Automatic_differentiation" target="_top">automatic
       differentiation</a> (reverse mode) of mathematical functions. This implementation
-      builds a computational graph known as a tape, which sotres all operations and
+      builds a computational graph known as a tape, which stores all operations and
       their corresponding derivatives. The total gradients are then computed by reverse
       accumulation via the chain rule.
     </p>
@@ -197,11 +213,14 @@
       to the original function's evaluation time.
     </p>
 <p>
-      2. It is possible to compute higher order derivatives by applying reverse mode
-      over reverse mode differentiation. The backward function builds a new computational
-      tape over the gradient computation. This approach is conceptually sound, but
-      it can become computationally expensive very quickly. Forward mode autodiff
-      is generally preferrable when computing higher order derivatives.
+      2. While forward-over-reverse is often the most efficient way to obtain Hessians
+      or Jacobian–vector products, our implementation currently supports reverse-over-reverse
+      only. This means higher-order derivatives are available, but at a higher computational
+      cost.It is possible to compute higher order derivatives by applying reverse
+      mode over reverse mode differentiation. The backward function builds a new
+      computational tape over the gradient computation. This approach is conceptually
+      sound, but it can become computationally expensive very quickly. Forward mode
+      autodiff is generally preferrable when computing higher order derivatives.
     </p>
 <p>
       3. While reverse mode is fast for computing the gradient, it has to store all
@@ -1742,6 +1761,4538 @@
 </table></div>
 <h2>
 <a name="math_toolkit.autodiff0.h3"></a>
+      <span class="phrase"><a name="math_toolkit.autodiff0.table-of-specfuns"></a></span><a class="link" href="autodiff0.html#math_toolkit.autodiff0.table-of-specfuns">Specfun
+      Support</a>
+    </h2>
+<div class="informaltable"><table class="table">
+<colgroup>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+<col>
+</colgroup>
+<thead><tr>
+<th>
+              <p>
+                Function
+              </p>
+            </th>
+<th>
+              <p>
+                compiles with ET ON
+              </p>
+            </th>
+<th>
+              <p>
+                runs with ET ON
+              </p>
+            </th>
+<th>
+              <p>
+                compiles with ET OFF
+              </p>
+            </th>
+<th>
+              <p>
+                runs with ET OFF
+              </p>
+            </th>
+<th>
+              <p>
+                works with multiprecision
+              </p>
+            </th>
+<th>
+              <p>
+                known issues
+              </p>
+            </th>
+</tr></thead>
+<tbody>
+<tr>
+<td>
+              <p>
+                tgamma
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                tgamma1pm1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                lgamma
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                digamma
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                trigamma
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                polygamma
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                tgamma_ratio
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                tgamma_delta_ratio
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                gamma_p
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                gamma_q
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                tgamma_lower
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                rising_factorial
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                falling_factorial
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                beta
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ibeta
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ibetac
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                betac
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ibeta_inv
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ibetac_inv
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ibeta_inva
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ibetac_inva
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ibeta_invb
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ibetac_invb
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ibeta_derivative
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                legendre_p
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                legendre_p_prime
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                legendre_q
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                laguerre
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                hermite
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                chebyshev_t
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                chebyshev_u
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                chebyshev_t_prime
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                shperical_harmonic
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                spherical_harmonic_r
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                spherical_harmonic_i
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                gegenbauer
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                gegenbauer_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                gegenbauer_derivative
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_derivative
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_double_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_bessel_j
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_neumann
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_bessel_i
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_bessel_k
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sph_bessel
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sph_neumann
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_bessel_j_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_neumann_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_bessel_i_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_bessel_k_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sph_bessel_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sph_neumann_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_hankel_1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cyl_hankel_2
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sph_hankel_1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sph_hankel_2
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                airy_ai
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                airy_bi
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                airy_ai_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                airy_bi_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ellint_rf
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ellint_rd
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ellint_rj
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ellint_rc
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ellint_rg
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ellint_1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ellint_2
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ellint_3
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                ellint_d
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_zeta
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                heuman_labda
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_cd
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_cn
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_cs
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_dc
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_dn
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_ds
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_nc
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_nd
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_ns
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_sc
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_sd
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_sn
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta1tau
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta2
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta1tau
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta3
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta3tau
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta3m1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta3m1tau
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta4
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta4tau
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta4m1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                jacobi_theta4m1tau
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                lambert_w0
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                lambert_wm1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                lambert_w0_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                lambert_wm1_prime
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                zeta
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                expint
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                hypergeometric_1F0
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                hypergeometric_0F1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                hypergeometric_2F0
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                hypergeometric_1F1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sin_pi
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cos_pi
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                log1p
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                expm1
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                cbrt
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sqrt1pm1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                powm1
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                hypot
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                rsqrt
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                logaddexp
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                logsumexp
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sinc_pi
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                sinhc_pi
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                YES
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+<tr>
+<td>
+              <p>
+                owens_t
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+<td>
+              <p>
+                NO
+              </p>
+            </td>
+<td>
+              <p>
+                N/A
+              </p>
+            </td>
+</tr>
+</tbody>
+</table></div>
+<h2>
+<a name="math_toolkit.autodiff0.h4"></a>
       <span class="phrase"><a name="math_toolkit.autodiff0.expression_templates"></a></span><a class="link" href="autodiff0.html#math_toolkit.autodiff0.expression_templates">Example
       1: Linear Regression</a>
     </h2>
@@ -1854,8 +6405,18 @@
       learning_rate = 1e-3;
     </p>
 <p>
-      The learning rate is a tunable parameter determining the "velocity"
-      with which we descend to a solution.
+      The learning rate controls how large a step we take in the direction of the
+      negative gradient each iteration. Intuitively, it sets the "velocity"
+      of descent toward a minimum.
+    </p>
+<p>
+      Too high: the optimization may overshoot minima, oscillate, or even diverge.
+      Too low: convergence will be very slow and may stall in shallow regions.
+    </p>
+<p>
+      In practice, values in the range [1e-4, 1e-1] are common starting points, with
+      1e-3 being a typical safe default for many problems. The best choice depends
+      on the scale of the data, the model, and the curvature of the loss landscape.
     </p>
 <pre class="programlisting"><span class="keyword">while</span> <span class="special">(</span><span class="identifier">loss_v</span> <span class="special">&gt;</span> <span class="number">0.005</span><span class="special">)</span> <span class="special">{</span>
     <span class="identifier">tape</span><span class="special">.</span><span class="identifier">zero_grad</span><span class="special">();</span> <span class="comment">// zero out all the adjoints</span>
@@ -1904,7 +6465,7 @@
 <span class="special">-------------------------------</span>
 </pre>
 <h3>
-<a name="math_toolkit.autodiff0.h4"></a>
+<a name="math_toolkit.autodiff0.h5"></a>
       <span class="phrase"><a name="math_toolkit.autodiff0.example-black-scholes"></a></span><a class="link" href="autodiff0.html#math_toolkit.autodiff0.example-black-scholes">Example
       2: Black-Scholes Option Pricing with Greeks</a>
     </h3>
@@ -2130,14 +6691,33 @@
 <pre class="programlisting"><span class="keyword">auto</span> <span class="identifier">g4</span> <span class="special">=</span> <span class="identifier">grad_nd</span><span class="special">&lt;</span><span class="number">4</span><span class="special">&gt;(</span><span class="identifier">f</span><span class="special">,</span> <span class="special">&amp;</span><span class="identifier">x</span><span class="special">,&amp;</span><span class="identifier">y</span><span class="special">,&amp;</span><span class="identifier">z</span><span class="special">)</span>
 </pre>
 <h3>
-<a name="math_toolkit.autodiff0.h5"></a>
+<a name="math_toolkit.autodiff0.h6"></a>
       <span class="phrase"><a name="math_toolkit.autodiff0.expression-templates-and-auto"></a></span><a class="link" href="autodiff0.html#math_toolkit.autodiff0.expression-templates-and-auto">Expression
       Templates and auto</a>
     </h3>
 <p>
-      Reverse mode autodiff is expression template based. This means that some care
-      has to be taken into considerations when writing code that uses this library.
-      For example consider the code below:
+      Reverse mode autodiff is expression template based by default. If you'd like
+      to disable expression templates (for debugging, benchmarking, or simplify integration
+      with other systems), you must define the following macro at compile time:
+    </p>
+<pre class="programlisting"><span class="preprocessor">#define</span> <span class="identifier">BOOST_MATH_REVERSE_MODE_ET_OFF</span>
+</pre>
+<p>
+      or pass it to the compiler via flag
+    </p>
+<pre class="programlisting"><span class="identifier">g</span><span class="special">++</span> <span class="special">-</span><span class="identifier">DBOOST_MATH_REVERSE_MODE_ET_OFF</span>
+</pre>
+<p>
+      The expression templated version of this code doesn't currently interact nicely
+      with the Boost.Math special function implementations, and will throw compile
+      time errors. Disabling expression templates will often fix this, however various
+      special functions are implemented in a way that breaks the automatic differentiation
+      chain for certain values. Complete special function support may be added in
+      the future. Below is the list of the current state of special function support.
+    </p>
+<p>
+      Furthermore, some care also has to be taken when writing code with expression
+      templated types. For example consider the code below:
     </p>
 <pre class="programlisting"><span class="identifier">rvar</span><span class="special">&lt;</span><span class="keyword">double</span><span class="special">,</span> <span class="number">1</span><span class="special">&gt;</span> <span class="identifier">x</span> <span class="special">=</span> <span class="number">1.0</span><span class="special">;</span>
 <span class="identifier">rvar</span><span class="special">&lt;</span><span class="keyword">double</span><span class="special">,</span> <span class="number">1</span><span class="special">&gt;</span> <span class="identifier">y</span> <span class="special">=</span> <span class="number">2.0</span><span class="special">;</span>
