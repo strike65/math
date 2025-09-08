@@ -640,6 +640,14 @@ namespace boost
    BOOST_MATH_GPU_ENABLED tools::promote_args_t<T1, T2>
          hypot(T1 x, T2 y, const Policy&);
 
+   template <class T1, class T2, class T3, boost::math::enable_if_t<!policies::is_policy<T3>::value, bool> = true>
+   BOOST_MATH_GPU_ENABLED tools::promote_args_t<T1, T2, T3>
+      hypot(T1 x, T2 y, T3 z);
+
+   template <class T1, class T2, class T3, class Policy>
+   BOOST_MATH_GPU_ENABLED tools::promote_args_t<T1, T2, T3>
+      hypot(T1 x, T2 y, T3 z, const Policy& pol);
+
    // cbrt - cube root.
    template <class RT>
    BOOST_MATH_GPU_ENABLED tools::promote_args_t<RT> cbrt(RT z);
