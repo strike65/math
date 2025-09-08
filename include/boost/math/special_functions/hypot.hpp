@@ -17,6 +17,7 @@
 #include <boost/math/policies/error_handling.hpp>
 #include <boost/math/special_functions/math_fwd.hpp>
 #include <boost/math/tools/utility.hpp>
+#include <boost/math/tools/numeric_limits.hpp>
 
 namespace boost{ namespace math{ namespace detail{
 
@@ -101,7 +102,7 @@ BOOST_MATH_GPU_ENABLED inline typename tools::promote_args<T1, T2>::type
       static_cast<result_type>(x), static_cast<result_type>(y), policies::policy<>());
 }
 
-template <class T1, class T2, class Policy>
+template <class T1, class T2, class Policy, boost::math::enable_if_t<!boost::math::numeric_limits<Policy>::is_specialized, bool>>
 BOOST_MATH_GPU_ENABLED inline typename tools::promote_args<T1, T2>::type
    hypot(T1 x, T2 y, const Policy& pol)
 {
@@ -110,7 +111,7 @@ BOOST_MATH_GPU_ENABLED inline typename tools::promote_args<T1, T2>::type
       static_cast<result_type>(x), static_cast<result_type>(y), pol);
 }
 
-template <class T1, class T2, class T3, boost::math::enable_if_t<!policies::is_policy<T3>::value, bool> = true>
+template <class T1, class T2, class T3, boost::math::enable_if_t<boost::math::numeric_limits<T3>::is_specialized, bool>>
 BOOST_MATH_GPU_ENABLED tools::promote_args_t<T1, T2, T3>
    hypot(T1 x, T2 y, T3 z)
 {
