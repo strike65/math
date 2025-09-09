@@ -810,6 +810,7 @@ struct fmod_left_float_expr
     }
     static const inner_t derivative(const inner_t &argv, const inner_t & /*v*/, const RealType &constant)
     {
+        BOOST_MATH_STD_USING
         return static_cast<RealType>(-1.0) * trunc(constant / argv);
     }
 };
