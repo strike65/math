@@ -1,4 +1,8 @@
-group	function	test-domain-min	test-domain-max
+#           Copyright Maksym Zhelyenzyakov 2025-2026.
+# Distributed under the Boost Software License, Version 1.0.
+#      (See accompanying file LICENSE_1_0.txt or copy at
+#           https://www.boost.org/LICENSE_1_0.txt)
+# group	function	test-domain-min	test-domain-max
 gamma	tgamma(arg)	-3	5
 gamma	tgamma1pm1(arg)	-3	5
 gamma	lgamma(arg)	-10	10

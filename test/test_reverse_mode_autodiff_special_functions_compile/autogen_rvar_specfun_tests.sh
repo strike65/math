@@ -28,8 +28,8 @@ generate_boost_test() {
     local max_val="$5"
     cat <<EOF
 //           Copyright Maksym Zhelyeznyakov 2025-2026
-//Distributed under the Boost Software License, Version 1.0.
-//(See accompanying file LICENSE_1_0.txt or copy at
+// Distributed under the Boost Software License, Version 1.0.
+// (See accompanying file LICENSE_1_0.txt or copy at
 //           https://www.boost.org/LICENSE_1_0.txt)
 //
 // This file was generated automatically with math/tests/autogen_rvar_specfun_tests.sh
@@ -116,7 +116,7 @@ floats_to_test["mp_types"]="${mp_type}"
 
 # Skip the header (first line) and read the list of special functions line by line.
 # The `IFS=$'\t'` ensures that the fields are split by a tab character.
-tail -n +2 "$SPECFUN_LIST" | while IFS=$'\t' read -r function_group specfun min_val max_val; do
+tail -n +2 "$SPECFUN_LIST" | grep -v '^[[:space:]]*#' | while IFS=$'\t' read -r function_group specfun min_val max_val; do
     # Create the directory if it doesn't exist
     if [[ ! -d "${TEST_FOLDER}${function_group}" ]]; then
         mkdir -p "${TEST_FOLDER}${function_group}"
