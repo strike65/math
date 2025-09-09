@@ -1360,12 +1360,12 @@ test-suite autodiff :
 ;
 test-suite test_reverse_mode_autodiff
     :
-        [ run test_reverse_mode_autodiff_flat_linear_allocator.cpp ]
-        [ run test_reverse_mode_autodiff_constructors.cpp ]
-        [ run test_reverse_mode_autodiff_comparison_operators.cpp ]
-        [ run test_reverse_mode_autodiff_stl_support.cpp ]
-        [ run test_reverse_mode_autodiff_basic_math_ops.cpp ]
-        [ run test_reverse_mode_autodiff_error_functions.cpp ]
+        [ run test_reverse_mode_autodiff_flat_linear_allocator.cpp /boost/test//boost_unit_test_framework : : : <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj release ] 
+        [ run test_reverse_mode_autodiff_constructors.cpp /boost/test//boost_unit_test_framework : : : <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj release ]
+        [ run test_reverse_mode_autodiff_comparison_operators.cpp /boost/test//boost_unit_test_framework : : : <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj release ]
+        [ run test_reverse_mode_autodiff_stl_support.cpp /boost/test//boost_unit_test_framework : : : <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj release ]
+        [ run test_reverse_mode_autodiff_basic_math_ops.cpp /boost/test//boost_unit_test_framework : : : <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj release ]
+        [ run test_reverse_mode_autodiff_error_functions.cpp /boost/test//boost_unit_test_framework : : : <toolset>gcc-mingw:<cxxflags>-Wa,-mbig-obj <debug-symbols>off <toolset>msvc:<cxxflags>/bigobj release ]
     ;
 test-suite autodiff-long-running-tests
     :
