@@ -241,11 +241,12 @@ Some key points about reverse mode automatic differentiation:
     [[ldexp]      [expression, &int]          [ x*pow(2,int) ]        [expression]   [pow(2,int)] []]
 ]
 [h1:table-of-specfuns Specfun Support]
+
 [table
 
 [[Function]	[compiles with ET ON]	[runs with ET ON]	[compiles with ET OFF]	[runs with ET OFF]	[works with multiprecision]	[known issues]]
 
-[[tgamma]	[YES]	[YES]	[YES]	[YES]	[NO]	[derivatives incorrect for integer arguments]]
+[[tgamma]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
 [[tgamma1pm1]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
 [[lgamma]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
 [[digamma]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
@@ -269,9 +270,9 @@ Some key points about reverse mode automatic differentiation:
 [[ibeta_invb]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
 [[ibetac_invb]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
 [[ibeta_derivative]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
-[[legendre_p]	[NO]	[N/A]	[YES]	[NO]	[NO]	[N/A]]
-[[legendre_p_prime]	[YES]	[NO]	[YES]	[NO]	[NO]	[N/A]]
-[[legendre_q]	[NO]	[N/A]	[YES]	[NO]	[NO]	[N/A]]
+[[legendre_p]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
+[[legendre_p_prime]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
+[[legendre_q]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
 [[laguerre]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
 [[hermite]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
 [[chebyshev_t]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
@@ -292,7 +293,7 @@ Some key points about reverse mode automatic differentiation:
 [[cyl_bessel_i]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
 [[cyl_bessel_k]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
 [[sph_bessel]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
-[[sph_neumann]	[NO]	[N/A]	[YES]	[NO]	[NO]	[N/A]]
+[[sph_neumann]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
 [[cyl_bessel_j_prime]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
 [[cyl_neumann_prime]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
 [[cyl_bessel_i_prime]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
@@ -305,8 +306,8 @@ Some key points about reverse mode automatic differentiation:
 [[sph_hankel_2]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
 [[airy_ai]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
 [[airy_bi]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
-[[airy_ai_prime]	[NO]	[N/A]	[YES]	[NO]	[NO]	[N/A]]
-[[airy_bi_prime]	[NO]	[N/A]	[YES]	[NO]	[NO]	[N/A]]
+[[airy_ai_prime]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
+[[airy_bi_prime]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
 [[ellint_rf]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
 [[ellint_rd]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
 [[ellint_rj]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
@@ -354,7 +355,7 @@ Some key points about reverse mode automatic differentiation:
 [[hypergeometric_1F1]	[NO]	[N/A]	[NO]	[N/A]	[NO]	[N/A]]
 [[sin_pi]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
 [[cos_pi]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
-[[log1p]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
+[[log1p]	[YES]	[NO]	[YES]	[NO]	[NO]	[N/A]]
 [[expm1]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
 [[cbrt]	[YES]	[YES]	[YES]	[YES]	[NO]	[N/A]]
 [[sqrt1pm1]	[NO]	[N/A]	[YES]	[YES]	[NO]	[N/A]]
@@ -705,9 +706,10 @@ When in doubt, its always preferrable to compute higher order derivatives with:
   auto g4 = grad_nd<4>(f, &x,&y,&z)
 
 [h2:expression-templates-and-auto Expression Templates and auto]
-Reverse mode autodiff is expression template based by default. If you'd like to disable expression templates (for debugging, benchmarking, or simplify integration with other systems), you must define the following macro at compile time:
+Reverse mode autodiff is expression template (`BOOST_MATH_REVERSE_MODE_ET_ON`) based by default. If you'd like to disable expression templates (for debugging, benchmarking, or simplify integration with other systems), you must define the following macro at compile time:
 
     #define BOOST_MATH_REVERSE_MODE_ET_OFF
+    #include <boost/math/differentiation/autodiff_reverse.hpp>
 
 or pass it to the compiler via flag
 

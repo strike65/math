@@ -1,3 +1,11 @@
+//           Copyright Maksym Zhelyeznyakov 2025-2026
+//Distributed under the Boost Software License, Version 1.0.
+//(See accompanying file LICENSE_1_0.txt or copy at
+//           https://www.boost.org/LICENSE_1_0.txt)
+//
+// This file was generated automatically with math/tests/autogen_rvar_specfun_tests.sh
+// DO NOT EDIT MANUALLY
+
 #define BOOST_MATH_REVERSE_MODE_ET_OFF
 #include "../../test_autodiff_reverse.hpp"
 #include <boost/math/special_functions.hpp>
@@ -10,7 +18,7 @@ using namespace rdiff;
 
 BOOST_AUTO_TEST_CASE_TEMPLATE(test_cyl_bessel_j_prime, T, bmp::cpp_bin_float_50)
 {
-    RandomSample<T> rng{1, 10};
+    RandomSample<T> rng{0, 10};
     T               x = rng.next();
 
     rvar<T, 1> x_ad = x;

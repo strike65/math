@@ -99,7 +99,7 @@ rvar<RealType1, DerivativeOrder> operator-(const expression<RealType1, Derivativ
                                            const RealType2                                   &v)
 {
     /* rvar - float = rvar + (-float) */
-    return add_const_expr<RealType1, DerivativeOrder, ARG>(arg, static_cast<RealType1>(-v));
+    return add_const_expr<RealType1, DerivativeOrder, ARG>(arg, -static_cast<RealType1>(v));
 }
 
 /** @brief
