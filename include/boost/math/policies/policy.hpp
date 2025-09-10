@@ -942,7 +942,7 @@ template <typename P>
 class is_policy_imp
 {
 public:
-   static constexpr bool value = (sizeof(::boost::math::policies::detail::test_is_policy(static_cast<P*>(nullptr))) == sizeof(char));
+   static constexpr bool value = (sizeof(detail::test_is_policy(static_cast<boost::math::remove_reference_t<boost::math::remove_cv_t<P>>*>(nullptr))) == sizeof(char));
 };
 
 }
@@ -954,6 +954,9 @@ public:
    static constexpr bool value = boost::math::policies::detail::is_policy_imp<P>::value;
    using type = boost::math::integral_constant<bool, value>;
 };
+
+template <typename T>
+BOOST_MATH_INLINE_CONSTEXPR bool is_policy_v = is_policy<T>::value;
 
 //
 // Helper traits class for distribution error handling:
