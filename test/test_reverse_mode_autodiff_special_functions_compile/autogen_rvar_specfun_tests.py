@@ -5,7 +5,11 @@ Created on Thu Sep 11 16:10:41 2025
 
 @author: mzhelyez
 """
-
+#           Copyright Maksym Zhelyeznyakov 2025-2026
+# Distributed under the Boost Software License, Version 1.0.
+# (See accompanying file LICENSE_1_0.txt or copy at
+#           https://www.boost.org/LICENSE_1_0.txt)
+#
 import sys, os, subprocess
 import logging
 import re
