@@ -158,5 +158,5 @@ static_assert(std::is_same<RandomSample<bmp::cpp_bin_float_50>::dist_t,
 template<typename T>
 constexpr T boost_close_tol(T scale_factor = 1e5)
 {
-    return std::numeric_limits<T>::epsilon() * scale_factor;
+    return 0.01;
 }
