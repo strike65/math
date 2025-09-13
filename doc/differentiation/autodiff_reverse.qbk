@@ -244,7 +244,7 @@ Some key points about reverse mode automatic differentiation:
 \[/ BEGIN SPECFUN TABLE\]
 [table
 [[Function]     [compiles with ET ON]   [runs with ET ON]       [compiles with ET OFF]          [runs with ET OFF]              [works with multiprecision]     [known issues]]
-[[tgamma]       [True]  [True]  [True]  [False] [False] [N/A]]
+[[tgamma]       [True]  [True]  [True]  [False] [False] [derivatives incorrect when argument is an integer]]
 [[tgamma1pm1]   [False] [N/A]   [True]  [False] [False] [N/A]]
 [[lgamma]       [True]  [True]  [True]  [False] [False] [N/A]]
 [[digamma]      [True]  [True]  [True]  [False] [False] [N/A]]
