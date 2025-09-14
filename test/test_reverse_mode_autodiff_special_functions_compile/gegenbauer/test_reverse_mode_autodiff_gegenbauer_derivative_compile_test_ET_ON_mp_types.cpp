@@ -28,3 +28,4 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_gegenbauer_derivative, T, multiprecision_floa
     BOOST_CHECK_CLOSE(y.item(), y_expect, 1000*boost_close_tol<T>());
 }
 BOOST_AUTO_TEST_SUITE_END()
+

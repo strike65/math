@@ -28,3 +28,4 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_cyl_neumann_prime, T, multiprecision_float_ty
     BOOST_CHECK_CLOSE(y.item(), y_expect, 1000*boost_close_tol<T>());
 }
 BOOST_AUTO_TEST_SUITE_END()
+

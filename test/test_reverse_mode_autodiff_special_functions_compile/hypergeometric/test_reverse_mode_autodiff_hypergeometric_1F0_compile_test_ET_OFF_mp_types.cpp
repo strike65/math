@@ -28,3 +28,4 @@ BOOST_AUTO_TEST_CASE_TEMPLATE(test_hypergeometric_1F0, T, multiprecision_float_t
     BOOST_CHECK_CLOSE(y.item(), y_expect, 1000*boost_close_tol<T>());
 }
 BOOST_AUTO_TEST_SUITE_END()
+
