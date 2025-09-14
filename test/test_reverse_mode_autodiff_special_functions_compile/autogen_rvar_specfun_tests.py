@@ -131,7 +131,7 @@ if __name__=="__main__":
     jam_compile_commands = open(JAM_COMPILE_COMMANDS_OUT,"w")
     jam_compile_commands.write("test-suite autodiff-long-running-tests\n")
     jam_compile_commands.write("    :\n")
-    compile_table_file.write("[table\n[[Function]\t[compiles with ET ON]\t[runs with ET ON]\t[compiles with ET OFF]	\t[runs with ET OFF]	\t[works with multiprecision]\t[known issues]]\n")
+    compile_table_file.write("[table\n[[Function]\t[compiles with ET ON]\t[runs with ET ON]\t[compiles with ET OFF]	\t[runs with ET OFF]\t[works with multiprecision]\t[known issues]]\n")
     with open(SPECFUN_LIST,"r") as specfun_file:
         for line in specfun_file:
             if not line.count("#"):
