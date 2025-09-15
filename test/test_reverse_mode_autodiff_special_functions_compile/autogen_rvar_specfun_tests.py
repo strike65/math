@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Sep 11 16:10:41 2025
-
-@author: mzhelyez
-"""
+# boost-no-inspect
 #           Copyright Maksym Zhelyeznyakov 2025-2026
 # Distributed under the Boost Software License, Version 1.0.
 # (See accompanying file LICENSE_1_0.txt or copy at
