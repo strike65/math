@@ -15,7 +15,7 @@ from pathlib import Path
 TEST_FOLDER="./"
 SPECFUN_LIST=f"{TEST_FOLDER}specfun_list.txt"
 CC="g++"
-CPPFLAGS="--std=c++14"
+CPPFLAGS="--std=c++23"
 CWD=os.getcwd()
 BOOST_ROOT_DIR=f"{CWD}/../../../../"
 BOOST_MATH_DIR=f"{BOOST_ROOT_DIR}/libs/math/"
