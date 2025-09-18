@@ -464,8 +464,7 @@ public:
     }
 
     template<typename T,
-             typename = typename std::enable_if<std::is_same<T, double>::value
-                                                && !std::is_same<RealType, double>::value>::type>
+             typename = std::enable_if_t<is_floating_point_v<T> && !is_same_v<T, RealType>>>
     rvar(T v)
         : value_(inner_t{static_cast<RealType>(v)})
     {
